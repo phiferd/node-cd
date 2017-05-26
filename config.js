@@ -19,7 +19,8 @@ var Private = {
     githubAuthorizedSubnets: [
       '204.232.175.64/27',
       '192.30.252.0/22'
-    ]
+    ],
+    key: process.env.DEPLOY_KEY || ""
   },
   repository: {
     branch: 'master'
