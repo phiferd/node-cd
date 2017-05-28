@@ -27,7 +27,7 @@ const Private = {
   },
   action: {
     exec: {
-      github: process.env.UPDATE_SCRIPT || './github.sh',
+      github: process.env.GITHUB_MONITOR_UPDATE_SCRIPT || './github.sh',
     }
   }
 }
