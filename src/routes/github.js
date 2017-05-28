@@ -22,7 +22,7 @@ GitHub.prototype.post = function (req, res) {
 
   hmac.update(stringBody);
   const expectedSignature = Buffer.from("sha1=" + hmac.digest('hex'), 'utf8');
-  const actualSignature = Buffer.from(req.headers["X-Hub-Signature"], 'utf8');
+  const actualSignature = Buffer.from(req.headers["x-hub-signature"], 'utf8');
 
   console.log(`key: ${config.security.key}`);
   console.log(`body: ${stringBody}`);
