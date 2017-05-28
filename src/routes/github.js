@@ -1,5 +1,5 @@
-var Netmask = require('netmask').Netmask
-var config
+const Netmask = require('netmask').Netmask
+let config
 
 function GitHub(conf) {
   config = conf
@@ -12,9 +12,9 @@ function create(conf) {
 module.exports.create = create;
 
 GitHub.prototype.post = function (req, res) {
-  var authorizedIps = config.security.authorizedIps;
-  var githubIps = config.security.githubIps;
-  var payload = {
+  const authorizedIps = config.security.authorizedIps;
+  const githubIps = config.security.githubIps;
+  const payload = {
     key: req.body.key || req.query.key,
     ref: req.body.ref || req.query.ref
   };
@@ -40,7 +40,7 @@ GitHub.prototype.post = function (req, res) {
     return;
   }
 
-  var ipv4 = req.ip.replace('::ffff:', '');
+  const ipv4 = req.ip.replace('::ffff:', '');
   if (ipv4 !== "::1" && !(inAuthorizedSubnet(ipv4) || authorizedIps.indexOf(ipv4) >= 0 || githubIps.indexOf(ipv4) >= 0)) {
     console.log('Unauthorized IP:', req.ip, '(', ipv4, ')');
     res.writeHead(403);
@@ -61,8 +61,8 @@ GitHub.prototype.post = function (req, res) {
   res.end();
 };
 
-var inAuthorizedSubnet = function (ip) {
-  var authorizedSubnet = config.security.githubAuthorizedSubnets.map(function (subnet) {
+const inAuthorizedSubnet = function (ip) {
+  const authorizedSubnet = config.security.githubAuthorizedSubnets.map(function (subnet) {
     return new Netmask(subnet)
   });
   return authorizedSubnet.some(function (subnet) {
@@ -70,9 +70,9 @@ var inAuthorizedSubnet = function (ip) {
   })
 };
 
-var myExec = function (line) {
-  var exec = require('child_process').exec
-  var execCallback = function (error, stdout, stderror ) {
+const myExec = function (line) {
+  const exec = require('child_process').exec
+  const execCallback = function (error, stdout, stderr) {
     if (error !== null) {
       console.log('exec error: ' + error)
     }
