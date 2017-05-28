@@ -16,6 +16,8 @@ module.exports.create = create;
 GitHub.prototype.post = function (req, res) {
   const hmac = crypto.createHmac('sha1', config.security.key);
   const stringBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
+  console.log(`body: ${stringBody}`);
+
   hmac.update(stringBody);
   const expectedSignature = Buffer.from("sha1=" + hmac.digest('hex'), 'utf8');
   const actualSignature = Buffer.from(req.headers["X-Hub-Signature"], 'utf8');
