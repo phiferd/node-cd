@@ -72,11 +72,15 @@ var inAuthorizedSubnet = function (ip) {
 
 var myExec = function (line) {
   var exec = require('child_process').exec
-  var execCallback = function (error) {
+  var execCallback = function (error, stdout, stderror ) {
     if (error !== null) {
       console.log('exec error: ' + error)
     }
+    else {
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    }
   };
-  console.log("Running callback");
+  console.log("Running callback: " + line);
   exec(line, execCallback)
 };
