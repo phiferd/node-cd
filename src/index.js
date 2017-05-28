@@ -1,23 +1,38 @@
-var express = require('express')
-var path = require('path')
-var http = require('http')
-var routes = require('./routes.js')
-var githubController = require('./routes/github.js')
-var config = require('../config.js')
-var app = express()
-var morgan = require('morgan')
-var bodyParser = require('body-parser')
+const http = require('http')
+const createHandler = require('github-webhook-handler')
+const config = require('../config.js')
+const handler = createHandler({ path: '/github', secret: config.security.key })
 
-app.set('port', config.server.port)
-app.use(morgan('combined'))
-app.use(bodyParser.raw())
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(express.static(path.join(__dirname + 'public')))
+http.createServer(function (req, res) {
+  handler(req, res, function (err) {
+    res.statusCode = 404
+    res.end('no such location')
+  })
+}).listen(config.server.port)
 
-app.get('/', routes.index.index)
-app.get('/favicon.ico', routes.index.favicon)
-app.post('/github', githubController.create(config).post)
-
-http.createServer(app).listen(app.get('port'), function () {
-  console.log('Node-cd server listening on port ' + app.get('port'))
+handler.on('error', function (err) {
+  console.error('Error:', err.message)
 })
+
+handler.on('push', function (event) {
+  console.log('Received a push event for %s to %s',
+    event.payload.repository.name,
+    event.payload.ref)
+
+  myExec(config.action.exec.github);
+})
+
+const myExec = function (line) {
+  const exec = require('child_process').exec
+  const execCallback = function (error, stdout, stderr) {
+    if (error !== null) {
+      console.log('exec error: ' + error)
+    }
+    else {
+      console.log(`stdout: ${stdout}`);
+      console.log(`stderr: ${stderr}`);
+    }
+  };
+  console.log("Running callback: " + line);
+  exec(line, execCallback)
+};
