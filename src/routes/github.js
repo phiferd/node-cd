@@ -16,6 +16,7 @@ module.exports.create = create;
 GitHub.prototype.post = function (req, res) {
   const hmac = crypto.createHmac('sha1', config.security.key);
   const stringBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
+  console.log(`body type: ${typeof req.body}`);
   console.log(`body: ${req.body}`);
   console.log(`stringBody: ${stringBody}`);
   console.log(`header: ${req.headers}`);
