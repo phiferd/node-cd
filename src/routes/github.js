@@ -17,6 +17,8 @@ GitHub.prototype.post = function (req, res) {
   const hmac = crypto.createHmac('sha1', config.security.key);
   const stringBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
   console.log(`body: ${stringBody}`);
+  console.log(`header: ${req.headers}`);
+  console.log(`header2: ${JSON.stringify(req.headers)}`);
 
   hmac.update(stringBody);
   const expectedSignature = Buffer.from("sha1=" + hmac.digest('hex'), 'utf8');
