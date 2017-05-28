@@ -34,7 +34,7 @@ GitHub.prototype.post = function (req, res) {
   }
 
   if (config.security.key && payload.key !== config.security.key) {
-    console.log(`You didn't say the magic word, payload=${JSON.stringify(payload)}`);
+    console.log(`You didn't say the magic word, payload=${JSON.stringify(payload)}, url: ${req.originalUrl}`);
     res.writeHead(403);
     res.end();
     return;
