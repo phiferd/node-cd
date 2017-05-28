@@ -1,4 +1,6 @@
 const Netmask = require('netmask').Netmask
+const crypto = require('crypto');
+
 let config
 
 function GitHub(conf) {
@@ -12,12 +14,20 @@ function create(conf) {
 module.exports.create = create;
 
 GitHub.prototype.post = function (req, res) {
+  const hmac = crypto.createHmac('sha1', config.security.key);
+  const stringBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
+  hmac.update(stringBody);
+  const expectedSignature = Buffer.from("sha1=" + hmac.digest('hex'), 'utf8');
+  const actualSignature = Buffer.from(req.headers["X-Hub-Signature"], 'utf8');
+
+  console.log(`key: ${config.security.key}`);
+  console.log(`body: ${stringBody}`);
+  console.log(`signature: ${expectedSignature}`);
+  console.log(`actual signature: ${actualSignature}`);
+
   const authorizedIps = config.security.authorizedIps;
   const githubIps = config.security.githubIps;
-  const payload = {
-    key: req.body.key || req.query.key,
-    ref: req.body.ref || req.query.ref
-  };
+  const payload = JSON.parse(stringBody);
 
   if (!payload) {
     console.log('No payload');
@@ -26,15 +36,8 @@ GitHub.prototype.post = function (req, res) {
     return;
   }
 
-  if (!config.security.key) {
-    console.log("No key is configured.  Please add a key and include it in the request");
-    res.writeHead(500);
-    res.end();
-    return;
-  }
-
-  if (config.security.key && payload.key !== config.security.key) {
-    console.log(`You didn't say the magic word, payload=${JSON.stringify(payload)}, url: ${req.originalUrl}`);
+  if (expectedSignature.length !== actualSignature.length || !crypto.timingSafeEqual(expectedSignature, actualSignature)) {
+    console.log(`Payload signature doesn't match, payload=${JSON.stringify(payload)}, url: ${req.originalUrl}`);
     res.writeHead(403);
     res.end();
     return;
@@ -48,9 +51,7 @@ GitHub.prototype.post = function (req, res) {
     return;
   }
 
-  if (payload.ref === config.repository.branch ||
-    payload.ref === 'refs/heads/master' ||
-    payload.ref === 'refs/heads/develop') {
+  if (payload.ref === config.repository.branch) {
     myExec(config.action.exec.github);
   }
   else {
