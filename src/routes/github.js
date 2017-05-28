@@ -20,7 +20,7 @@ GitHub.prototype.post = function (req, res) {
   console.log(`header: ${req.headers}`);
   console.log(`header2: ${JSON.stringify(req.headers)}`);
 
-  hmac.update(stringBody);
+  hmac.update(req.body);
   const expectedSignature = Buffer.from("sha1=" + hmac.digest('hex'), 'utf8');
   const actualSignature = Buffer.from(req.headers["x-hub-signature"], 'utf8');
 
