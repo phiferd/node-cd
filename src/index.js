@@ -11,6 +11,7 @@ var bodyParser = require('body-parser')
 app.set('port', config.server.port)
 app.use(morgan('combined'))
 app.use(bodyParser.raw())
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname + 'public')))
 
 app.get('/', routes.index.index)
