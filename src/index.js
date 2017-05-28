@@ -8,7 +8,7 @@ var app = express()
 var morgan = require('morgan')
 var bodyParser = require('body-parser')
 
-app.set('port', process.env.WWW_PORT || config.server.port)
+app.set('port', config.server.port)
 app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))

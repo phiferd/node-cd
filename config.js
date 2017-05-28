@@ -1,5 +1,7 @@
 const Private = {
-  server: {port: '61440'}, // Port is overriden by env var 'WWW_PORT'
+  server: {
+    port:  process.env.NODE_CD_PORT || '61440'
+  },
   security: {
     authorizedIps: [
       '127.0.0.1',
@@ -20,14 +22,14 @@ const Private = {
       '204.232.175.64/27',
       '192.30.252.0/22'
     ],
-    key: process.env.DEPLOY_KEY || ""
+    key: process.env.NODE_CD_DEPLOY_KEY || ""
   },
   repository: {
     branch: 'master'
   },
   action: {
     exec: {
-      github: process.env.GITHUB_MONITOR_UPDATE_SCRIPT || './github.sh',
+      github: process.env.NODE_CD_UPDATE_SCRIPT || './github.sh',
     }
   }
 }
