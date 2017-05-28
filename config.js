@@ -1,4 +1,4 @@
-var Private = {
+const Private = {
   server: {port: '61440'}, // Port is overriden by env var 'WWW_PORT'
   security: {
     authorizedIps: [
@@ -27,9 +27,7 @@ var Private = {
   },
   action: {
     exec: {
-      github: './github.sh',
-      bitbucket: './bitbucket.sh',
-      contentful: './contentful.sh'
+      github: process.env.UPDATE_SCRIPT || './github.sh',
     }
   }
 }

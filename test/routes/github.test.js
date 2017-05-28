@@ -1,8 +1,8 @@
-var test = require('tape').test
-var githubController = require('../../src/routes/github.js')
+const test = require('tape').test
+const githubController = require('../../src/routes/github.js')
 
 test('The GitHub endpoint with authorized IP should return 200', (assert) => {
-  var github = githubController.create({
+  const github = githubController.create({
     security: {
       authorizedIps: ['1.2.3.4'],
       githubAuthorizedSubnets: [],
@@ -14,13 +14,13 @@ test('The GitHub endpoint with authorized IP should return 200', (assert) => {
     }
   })
 
-  var req = {
+  const req = {
     ip: '1.2.3.4',
     body: {'dummy': true, key: "test"},
     query: {}
   }
-  var res = {}
-  var code
+  const res = {}
+  let code;
 
   res.writeHead = function (statusCode) {
     code = statusCode
@@ -35,7 +35,7 @@ test('The GitHub endpoint with authorized IP should return 200', (assert) => {
 })
 
 test('The GitHub endpoint with authorized IPv6 should return 200', (assert) => {
-  var github = githubController.create({
+  const github = githubController.create({
     security: {
       authorizedIps: ['1.2.3.4'],
       githubAuthorizedSubnets: ['1.2.3.4/24'],
@@ -47,13 +47,13 @@ test('The GitHub endpoint with authorized IPv6 should return 200', (assert) => {
     }
   })
 
-  var req = {
+  const req = {
     ip: '::ffff:1.2.3.4',
     body: {'dummy': true, key: "test"},
     query: {}
   }
-  var res = {}
-  var code
+  const res = {}
+  let code;
 
   res.writeHead = function (statusCode) {
     code = statusCode
@@ -68,7 +68,7 @@ test('The GitHub endpoint with authorized IPv6 should return 200', (assert) => {
 })
 
 test('The GitHub endpoint with authorized GitHub IP should return 200', (assert) => {
-  var github = githubController.create({
+  const github = githubController.create({
     security: {
       authorizedIps: [],
       githubAuthorizedSubnets: [],
@@ -80,13 +80,13 @@ test('The GitHub endpoint with authorized GitHub IP should return 200', (assert)
     }
   })
 
-  var req = {
+  const req = {
     ip: '1.2.3.4',
     body: {'dummy': true, key: "test"},
     query: {}
   }
-  var res = {}
-  var code
+  const res = {}
+  let code
 
   res.writeHead = function (statusCode) {
     code = statusCode
@@ -101,7 +101,7 @@ test('The GitHub endpoint with authorized GitHub IP should return 200', (assert)
 })
 
 test('The GitHub endpoint with unauthorized GitHub IP should return 403', (assert) => {
-  var github = githubController.create({
+  const github = githubController.create({
     security: {
       authorizedIps: [],
       githubAuthorizedSubnets: [],
@@ -113,13 +113,13 @@ test('The GitHub endpoint with unauthorized GitHub IP should return 403', (asser
     }
   })
 
-  var req = {
+  const req = {
     ip: '1.2.3.4',
     body: {'dummy': true, key: "test"},
     query: {}
   }
-  var res = {}
-  var code
+  const res = {}
+  let code
 
   res.writeHead = function (statusCode) {
     code = statusCode
@@ -134,7 +134,7 @@ test('The GitHub endpoint with unauthorized GitHub IP should return 403', (asser
 })
 
 test('The GitHub endpoint with incorrect key should return 403', (assert) => {
-  var github = githubController.create({
+  const github = githubController.create({
     security: {
       authorizedIps: [],
       githubAuthorizedSubnets: [],
@@ -146,13 +146,13 @@ test('The GitHub endpoint with incorrect key should return 403', (assert) => {
     }
   })
 
-  var req = {
+  const req = {
     ip: '1.2.3.4',
     body: {'dummy': true, key: "wrong"},
     query: {}
   }
-  var res = {}
-  var code
+  const res = {}
+  let code
 
   res.writeHead = function (statusCode) {
     code = statusCode
@@ -167,7 +167,7 @@ test('The GitHub endpoint with incorrect key should return 403', (assert) => {
 })
 
 test('Congig without a password is not allowed', (assert) => {
-  var github = githubController.create({
+  const github = githubController.create({
     security: {
       authorizedIps: [],
       githubAuthorizedSubnets: [],
@@ -178,13 +178,13 @@ test('Congig without a password is not allowed', (assert) => {
     }
   })
 
-  var req = {
+  const req = {
     ip: '1.2.3.4',
     body: {'dummy': true, key: ""},
     query: {}
   }
-  var res = {}
-  var code
+  const res = {}
+  let code
 
   res.writeHead = function (statusCode) {
     code = statusCode
