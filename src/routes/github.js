@@ -14,7 +14,10 @@ module.exports.create = create;
 GitHub.prototype.post = function (req, res) {
   var authorizedIps = config.security.authorizedIps;
   var githubIps = config.security.githubIps;
-  var payload = req.body;
+  var payload = {
+    key: req.body.key || req.query.key,
+    ref: req.body.ref || req.query.ref
+  };
 
   if (!payload) {
     console.log('No payload');
@@ -24,12 +27,15 @@ GitHub.prototype.post = function (req, res) {
   }
 
   if (!config.security.key) {
-    console.log("WARNING: No key specified, anyone can trigger this update!");
+    console.log("No key is configured.  Please add a key and include it in the request");
+    res.writeHead(500);
+    res.end();
+    return;
   }
 
   if (config.security.key && payload.key !== config.security.key) {
     console.log("You didn't say the magic word");
-    res.writeHead(400);
+    res.writeHead(403);
     res.end();
     return;
   }

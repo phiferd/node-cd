@@ -6,7 +6,8 @@ test('The GitHub endpoint with authorized IP should return 200', (assert) => {
     security: {
       authorizedIps: ['1.2.3.4'],
       githubAuthorizedSubnets: [],
-      githubIps: []
+      githubIps: [],
+      key: "test"
     },
     repository: {
       branch: 'master'
@@ -15,7 +16,8 @@ test('The GitHub endpoint with authorized IP should return 200', (assert) => {
 
   var req = {
     ip: '1.2.3.4',
-    body: {'dummy': true}
+    body: {'dummy': true, key: "test"},
+    query: {}
   }
   var res = {}
   var code
@@ -37,7 +39,8 @@ test('The GitHub endpoint with authorized IPv6 should return 200', (assert) => {
     security: {
       authorizedIps: ['1.2.3.4'],
       githubAuthorizedSubnets: ['1.2.3.4/24'],
-      githubIps: []
+      githubIps: [],
+      key: "test"
     },
     repository: {
       branch: 'master'
@@ -46,7 +49,8 @@ test('The GitHub endpoint with authorized IPv6 should return 200', (assert) => {
 
   var req = {
     ip: '::ffff:1.2.3.4',
-    body: {'dummy': true}
+    body: {'dummy': true, key: "test"},
+    query: {}
   }
   var res = {}
   var code
@@ -68,7 +72,8 @@ test('The GitHub endpoint with authorized GitHub IP should return 200', (assert)
     security: {
       authorizedIps: [],
       githubAuthorizedSubnets: [],
-      githubIps: ['1.2.3.4']
+      githubIps: ['1.2.3.4'],
+      key: "test"
     },
     repository: {
       branch: 'master'
@@ -77,7 +82,8 @@ test('The GitHub endpoint with authorized GitHub IP should return 200', (assert)
 
   var req = {
     ip: '1.2.3.4',
-    body: {'dummy': true}
+    body: {'dummy': true, key: "test"},
+    query: {}
   }
   var res = {}
   var code
@@ -99,7 +105,8 @@ test('The GitHub endpoint with unauthorized GitHub IP should return 403', (asser
     security: {
       authorizedIps: [],
       githubAuthorizedSubnets: [],
-      githubIps: []
+      githubIps: [],
+      key: "test"
     },
     repository: {
       branch: 'master'
@@ -108,7 +115,8 @@ test('The GitHub endpoint with unauthorized GitHub IP should return 403', (asser
 
   var req = {
     ip: '1.2.3.4',
-    body: {'dummy': true}
+    body: {'dummy': true, key: "test"},
+    query: {}
   }
   var res = {}
   var code
@@ -119,6 +127,71 @@ test('The GitHub endpoint with unauthorized GitHub IP should return 403', (asser
 
   res.end = function () {
     assert.equal(code, 403)
+    assert.end()
+  }
+
+  github.post(req, res)
+})
+
+test('The GitHub endpoint with incorrect key should return 403', (assert) => {
+  var github = githubController.create({
+    security: {
+      authorizedIps: [],
+      githubAuthorizedSubnets: [],
+      githubIps: [],
+      key: "test"
+    },
+    repository: {
+      branch: 'master'
+    }
+  })
+
+  var req = {
+    ip: '1.2.3.4',
+    body: {'dummy': true, key: "wrong"},
+    query: {}
+  }
+  var res = {}
+  var code
+
+  res.writeHead = function (statusCode) {
+    code = statusCode
+  }
+
+  res.end = function () {
+    assert.equal(code, 403)
+    assert.end()
+  }
+
+  github.post(req, res)
+})
+
+test('Congig without a password is not allowed', (assert) => {
+  var github = githubController.create({
+    security: {
+      authorizedIps: [],
+      githubAuthorizedSubnets: [],
+      githubIps: []
+    },
+    repository: {
+      branch: 'master'
+    }
+  })
+
+  var req = {
+    ip: '1.2.3.4',
+    body: {'dummy': true, key: ""},
+    query: {}
+  }
+  var res = {}
+  var code
+
+  res.writeHead = function (statusCode) {
+    code = statusCode
+  }
+
+  res.end = function () {
+    assert.equal(code, 500)
     assert.end()
   }
 
